@@ -1,0 +1,76 @@
+WoW Version 3.2 Event Notes
+===========================
+
+For details on the Events see http://www.wowwiki.com/Events/Spell
+
+Information Gathering
+=====================
+
+Instant Cast Spell (successful):
+UNIT_SPELLCAST_SENT
+UNIT_SPELLCAST_SUCCEEDED
+
+Instant Cast Spell (failed):
+UNIT_SPELLCAST_SENT
+UNIT_SPELLCAST_FAILED
+
+Normal Cast Spell (successful):
+UNIT_SPELLCAST_SENT
+UNIT_SPELLCAST_START
+UNIT_SPELLCAST_SUCCEEDED
+UNIT_SPELLCAST_STOP
+
+Normal Cast Spell (failed while casting, e.g. target died):
+UNIT_SPELLCAST_SENT
+UNIT_SPELLCAST_START
+UNIT_SPELLCAST_FAILED
+UNIT_SPELLCAST_STOP
+
+Normal Cast Spell (failed before casting, e.g. out of range):
+(UNIT_SPELLCAST_SENT)
+UNIT_SPELLCAST_FAILED
+
+Normal Cast Spell (interrupted by player):
+UNIT_SPELLCAST_SENT
+UNIT_SPELLCAST_START
+(UNIT_SPELLCAST_DELAYED)
+UNIT_SPELLCAST_INTERRUPTED
+UNIT_SPELLCAST_STOP
+
+Normal Cast Spell (interrupted e.g. by npc/other player)
+UNIT_SPELLCAST_SENT
+UNIT_SPELLCAST_START
+UNIT_SPELLCAST_STOP
+
+Channelled Spell (note: this sequence is always the same,
+no matter why the chanelling ends (regular end of cast,
+interrupt, fail...):
+UNIT_SPELLCAST_SENT
+UNIT_SPELLCAST_CHANNEL_START
+UNIT_SPELLCAST_SUCCEEDED
+UNIT_SPELLCAST_CHANNEL_STOP
+
+State Transitions for Detection
+===============================
+
+Init, Sent:
+UNIT_SPELLCAST_FAILED --> [fail] --> Init
+UNIT_SPELLCAST_CHANNEL_START --> [start] --> Channelled Spell
+UNIT_SPELLCAST_START --> [start] --> Normal Cast Spell
+UNIT_SPELLCAST_SUCCEEDED --> Instant Cast Spell --> [start] --> [done] --> Init
+
+Normal Cast Spell:
+UNIT_SPELLCAST_DELAYED --> [delayed] --> Normal Cast Spell
+UNIT_SPELLCAST_FAILED --> [fail] --> Init
+UNIT_SPELLCAST_INTERRUPTED --> [interrupt] --> Init
+UNIT_SPELLCAST_STOP --> StopOrInterrupt
+UNIT_SPELLCAST_SUCCEEDED --> [done] --> Init
+
+StopOrInterrupt:
+(looks like formerly an interrupt event was given, but not any longer. Set interrupt event as default until found otherwise)
+--> [interrupt] --> Init
+
+Channelled Spell:
+UNIT_SPELLCAST_DELAYED --> Channelled Spell
+UNIT_SPELLCAST_SUCCEEDED --> (nothing)
+UNIT_SPELLCAST_CHANNEL_STOP --> [done] --> Init

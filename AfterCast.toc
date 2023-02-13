@@ -1,0 +1,9 @@
+##
+## Interface: 30300
+## Title: AfterCast
+## Notes: v2.02-30300  Perform event after spell cast.                                                Runi was here :A
+## Author: Nutbrittle
+##
+
+AfterCast.lua
+AfterCast.xml
